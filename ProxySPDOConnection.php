@@ -192,28 +192,27 @@ final class ProxySPDOConnection implements ConnectionInterface
 
     public function useAuto(): ConnectionInterface
     {
-        if ($this->role === self::ROLE_AUTO) {
-            return $this;
-        }
-
-        return $this->parent;
+        return $this->withRole(self::ROLE_AUTO);
     }
 
     public function useMaster(): ConnectionInterface
     {
-        if ($this->role === self::ROLE_MASTER) {
-            return $this;
-        }
-
-        return $this->parent->useMaster();
+        return $this->withRole(self::ROLE_MASTER);
     }
 
     public function useSlave(): ConnectionInterface
     {
-        if ($this->role === self::ROLE_SLAVE) {
+        return $this->withRole(self::ROLE_SLAVE);
+    }
+
+    protected function withRole(string $role): self
+    {
+        if ($this->role === $role) {
             return $this;
         }
 
-        return $this->parent->useSlave();
+        $new = clone $this;
+        $new->role = $role;
+        return $new;
     }
 }
